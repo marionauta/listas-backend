@@ -9,7 +9,7 @@ interface Payload {
 
 export const getItemsHandler: Handler<Payload> = ({ payload: { listId } }) => {
   const itemsQuery = db.prepareQuery(
-    "select id, name, completed_at from items where list = :listId",
+    "select id, name, completedAt from items where listId = :listId",
   );
   const items = itemsQuery.allEntries({ listId }) as unknown as Item[];
   return {

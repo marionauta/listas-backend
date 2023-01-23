@@ -11,13 +11,16 @@ export const createItemHandler: Handler<Payload> = (
   { payload: { listId, name } },
 ) => {
   const id = crypto.randomUUID();
-  db.query("insert into items (id, list, name) values (:id, :listId, :name)", {
-    id,
-    listId,
-    name,
-  });
+  db.query(
+    "insert into items (id, listId, name) values (:id, :listId, :name)",
+    {
+      id,
+      listId,
+      name,
+    },
+  );
   const resultQuery = db.prepareQuery(
-    "select id, name, completed_at from items where id = :id",
+    "select id, name, completedAt from items where id = :id",
   );
   const result = resultQuery.firstEntry({ id });
   return {

@@ -8,18 +8,18 @@ type Payload = Item & {
 };
 
 export const updateItemHandler: Handler<Payload> = ({ payload }) => {
-  const { id, listId, name, completed_at } = payload;
+  const { id, listId, name, completedAt } = payload;
   db.query(
-    "update items set name = :name, completed_at = :completed_at where id = :id and list = :listId",
+    "update items set name = :name, completedAt = :completedAt where id = :id and listId = :listId",
     {
       id,
       listId,
       name,
-      completed_at,
+      completedAt,
     },
   );
   const resultQuery = db.prepareQuery(
-    "select id, name, completed_at from items where id = :id",
+    "select id, name, completedAt from items where id = :id",
   );
   const result = resultQuery.firstEntry({ id });
   return {
