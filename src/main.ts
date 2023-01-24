@@ -1,11 +1,12 @@
 import { serve } from "deno/http/server.ts";
 import handler from "@/handlers/mod.ts";
+import middlewares from "@/middlewares/mod.ts";
 import { Action } from "@/models/action.ts";
 
 const sockets: WebSocket[] = [];
 
 function handleCommand(ws: WebSocket, action: Action) {
-  const { actions, broadcast } = handler(action);
+  const { actions, broadcast } = middlewares(handler)(action);
   if (broadcast) {
     for (const socket of sockets) {
       for (const action of actions) {
