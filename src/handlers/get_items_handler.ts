@@ -1,19 +1,19 @@
 import { Item } from "@/models/item.ts";
 import { List } from "@/models/list.ts";
 import { Handler } from "@/models/handler.ts";
-import db from "@/db.ts";
+import db, { ItemRow } from "@/db.ts";
 
 interface Payload {
   listId: List["id"];
 }
 
+const getItemsQuery = db.prepareQuery<ItemRow, Item, { listId: string }>(
+  "select id, listId, name, completedAt from items where listId = :listId",
+);
+
 export const getItemsHandler: Handler<Payload> = ({ payload: { listId } }) => {
-  const itemsQuery = db.prepareQuery(
-    "select id, name, completedAt from items where listId = :listId",
-  );
-  const items = itemsQuery.allEntries({ listId }) as unknown as Item[];
+  const items = getItemsQuery.allEntries({ listId });
   return {
     actions: items.map((item) => ({ action: "item-updated", payload: item })),
-    broadcast: false,
   };
 };

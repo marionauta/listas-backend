@@ -6,12 +6,17 @@ interface Payload {
   listId: List["id"];
 }
 
+const deleteQuery = db.prepareQuery(
+  "delete from items where listId = :listId and completedAt is not null returning id",
+);
+
 export const deleteCompletedItemsHandler: Handler<Payload> = (
-  { payload: { listId } },
+  { payload },
 ) => {
-  const deleteQuery = db.prepareQuery(
-    "delete from items where listId = :listId and completedAt is not null returning id",
-  );
+  const listId = payload?.listId;
+  if (!listId) {
+    return { actions: [] };
+  }
   const deletedItemIds = deleteQuery.allEntries({ listId });
   return {
     actions: deletedItemIds.map((itemId) => ({

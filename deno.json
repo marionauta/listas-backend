@@ -2,6 +2,6 @@
   "imports": {
     "@/": "./src/",
     "deno/": "https://deno.land/std@0.174.0/",
-    "sqlite/": "https://deno.land/x/sqlite@v3.7.0/"
+    "sqlite/": "https://deno.land/x/sqlite@v3.8/"
   }
 }

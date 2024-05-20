@@ -4,12 +4,16 @@ const db = new DB("db.sqlite");
 
 db.execute("PRAGMA foreign_keys = ON;");
 
+export type ListRow = [string, string];
+
 db.execute(`
     CREATE TABLE IF NOT EXISTS lists (
         id UUID PRIMARY KEY,
         name TEXT NOT NULL
     );
 `);
+
+export type ItemRow = [string, string, string, number | null];
 
 db.execute(`
     CREATE TABLE IF NOT EXISTS items (

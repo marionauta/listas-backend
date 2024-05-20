@@ -24,10 +24,10 @@ export const createItemHandler: Handler<Payload> = (
   );
   const result = resultQuery.firstEntry({ id });
   return {
-    actions: [{
+    action: {
       action: "item-updated",
       payload: result,
-    }],
+    },
     broadcast: true,
   };
 };

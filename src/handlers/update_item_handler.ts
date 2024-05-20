@@ -1,32 +1,25 @@
-import db from "@/db.ts";
+import db, { ItemRow } from "@/db.ts";
 import { Handler } from "@/models/handler.ts";
 import { Item } from "@/models/item.ts";
-import { List } from "../models/list.ts";
 
-type Payload = Item & {
-  listId: List["id"];
-};
+const updateItemQuery = db.prepareQuery(
+  "update items set name = :name, completedAt = :completedAt where id = :id and listId = :listId",
+);
 
-export const updateItemHandler: Handler<Payload> = ({ payload }) => {
+const getUpdatedItemQuery = db.prepareQuery<ItemRow, Item>(
+  "select id, listId, name, completedAt from items where id = :id limit 1",
+);
+
+export const updateItemHandler: Handler<Item> = ({ payload }) => {
   const { id, listId, name, completedAt } = payload;
-  db.query(
-    "update items set name = :name, completedAt = :completedAt where id = :id and listId = :listId",
-    {
-      id,
-      listId,
-      name,
-      completedAt,
-    },
-  );
-  const resultQuery = db.prepareQuery(
-    "select id, name, completedAt from items where id = :id",
-  );
-  const result = resultQuery.firstEntry({ id });
+  updateItemQuery.execute({ id, listId, name, completedAt });
+  const result = getUpdatedItemQuery.firstEntry({ id });
+  if (!result) return { actions: [] };
   return {
-    actions: [{
+    action: {
       action: "item-updated",
       payload: result,
-    }],
+    },
     broadcast: true,
   };
 };

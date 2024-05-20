@@ -1,5 +1,6 @@
 import { Handler } from "@/models/handler.ts";
 import * as logger from "deno/log/mod.ts";
+import { actions } from "@/models/handler_response.ts";
 
 type Middleware = (next: Handler) => Handler;
 
@@ -8,18 +9,17 @@ const catchAll: Middleware = (next) => (action) => {
     return next(action);
   } catch (error) {
     return {
-      actions: [{
+      action: {
         action: "error",
         payload: error instanceof Error ? error.message : error,
-      }],
-      broadcast: false,
+      },
     };
   }
 };
 
 const logErrors: Middleware = (next) => (action) => {
   const response = next(action);
-  if (response.actions.some((action) => action.action === "error")) {
+  if (actions(response).some((action) => action.action === "error")) {
     logger.error({ request: action, response });
   }
   return response;
